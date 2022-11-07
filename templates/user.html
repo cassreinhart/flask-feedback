@@ -3,22 +3,11 @@
 {% block title %} {{ username }} {% endblock %}
 
 {% block content %}
-<h1>Register Below:</h1>
+<h1>User Details:</h1>
     <div class="container">
-        <form method="post">
-            {{ form.hidden_tag() }}
-            {% for field in form 
-                if field.widget.input_type != 'hidden' %}
-                <p>
-                    {{ field.label }}
-                    {{ field(class_="form-control") }}
-                
-                    {% for error in field.errors %}
-                    <span class="form-text text-danger">{{ error }}</span>
-                    {% endfor %}
-                </p>
-            {% endfor %}
-            <button class="btn btn-success" type="submit">Sign Up</button>
-        </form>
+        <h2>{{ user.username }}</h2>
+        <p><b>Name:</b>{{ user.first_name }} {{ user.last_name }}</p>
+        <p><b>Email:</b>{{ user.email }}</p>
+        
     </div>
 {% endblock %}

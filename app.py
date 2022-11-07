@@ -1,11 +1,12 @@
 from flask import Flask, session, render_template, redirect, flash
 from flask_debugtoolbar import DebugToolbarExtension
 
-from forms import UserForm
-from models import User
+from forms import RegisterForm, LoginForm
+from models import db, connect_db, User
+from sqlalchemy.exc import IntegrityError
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///auth_demo"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql:///feedback"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 app.config["SECRET_KEY"] = "abc123"
@@ -47,7 +48,7 @@ def register_form():
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     """Login to site"""
-    form = UserForm()
+    form = LoginForm()
 
     if form.validate_on_submit():
         username = form.username.data
@@ -57,7 +58,7 @@ def login_user():
         if user:
             flash(f"Welcome back, {username}")
             session["user_id"] = user.id
-            return redirect('/secret')
+            return redirect(f'/users/{user.username}')
         else:
             form.username.errors = ["Invalid username/password"]
     return render_template('login.html', form=form)
@@ -66,7 +67,8 @@ def login_user():
 def show_user(username):
     """Return text"""
     if 'user_id' in session:
-        return render_template('user.html', username=username)
+        user = User.query.get_or_404(username)
+        return render_template('user.html', user=user)
     else:
         return redirect('/login')
 
