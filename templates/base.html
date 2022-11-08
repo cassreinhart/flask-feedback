@@ -6,9 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/style.css">
-    <title>{% block title %} Feedback {% endblock %}</title>
+    <title>{% block title %} Flask Feedback {% endblock %}</title>
 </head>
 <body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">Feedback</a></li>
+                {% if user in session %}
+                <li><a href="/users/{{user.username}}">{{user.username}}</a></li>
+                <li><a href="/logout">Logout</a></li>
+                {% endif %}
+                
+            </ul>
+        </nav>
+    </header>
     <content>
     {% block content %}
 
