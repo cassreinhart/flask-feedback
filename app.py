@@ -35,18 +35,18 @@ def register_form():
         first_name = form.first_name.data
         last_name = form.last_name.data
         user = User.register(username, password, email, first_name, last_name)
-        db.session.add(new_user)
+        db.session.add(user)
         try:
             db.session.commit()
         except IntegrityError as err:
             print(err)
             print('*************')
             form.username.errors.append("That username already exists")
-            return render_template('register.html', form = form)
+            return render_template('/user/register.html', form = form)
         session['username'] = user.username
         flash("Welcome", "success")
         return redirect(f'/users/{user.username}')
-    return render_template('register.html', form = form)
+    return render_template('/user/register.html', form = form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
@@ -59,7 +59,7 @@ def login_user():
         user = User.authenticate(username, password)
 
         if user:
-            flash(f"Welcome back, {username}")
+            flash(f"Welcome back, {user.username}")
             session["username"] = user.username
             return redirect(f'/users/{user.username}')
         else:
@@ -104,14 +104,13 @@ def add_feedback(username):
 
     if 'username' not in session or 'username' != session['username']:
         raise Unauthorized()
-    
+
     form = FeedbackForm()
 
     if form.validate_on_submit():
         title = form.data.title
         content = form.data.content
         feedback = Feedback(title=title, content=content, username=username)
-
         db.session.add(feedback)
         db.session.commit()
 
@@ -144,7 +143,7 @@ def edit_feedback(feedback_id):
 
 @app.route('/feedback/<feedback_id>/delete', methods=['POST']) ####POST??
 def delete_feedback(feedback_id):
-    """Delete feedback and redirect to /users/username""""
+    """Delete feedback and redirect to /users/username"""
 
     feedback = Feedback.get(feedback_id)
 
