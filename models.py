@@ -23,12 +23,20 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable = False)
 
     @classmethod
-    def register(cls, username, pwd):
+    def register(cls, username, pwd, email, first_name, last_name):
         """Register user with hashed password, return user"""
 
         hashed = bcrypt.generate_password_hash(pwd)
         hashed_utf8 = hashed.decode('utf8')
-        return cls(username=username, password=hashed_utf8)
+        user = cls(
+            username=username, 
+            password=hashed_utf8,
+            email=email,
+            first_name=first_name,
+            last_name=last_name,
+        )
+
+        return user
 
     @classmethod
     def authenticate(cls, username, pwd):
