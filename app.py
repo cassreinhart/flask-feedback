@@ -51,6 +51,10 @@ def register_form():
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     """Login to site"""
+
+    if "username" in session:
+        return redirect(f"/users/{session['username']}")
+
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -61,7 +65,7 @@ def login_user():
         if user:
             flash(f"Welcome back, {user.username}")
             session["username"] = user.username
-            return redirect(f'/users/{user.username}')
+            return redirect(f'/users/{user.username}') ##########unauthorized error
         else:
             form.username.errors = ["Invalid username/password"]
     return render_template('/user/login.html', form=form)
@@ -76,7 +80,7 @@ def logout():
 @app.route('/users/<username>')
 def show_user(username):
     """Show info about the given user. Show all feedback given by that user."""
-    if 'username' not in session or 'username' != session['username']:
+    if 'username' not in session or username != session['username']:
         raise Unauthorized()
     
     user = User.query.get(username)
@@ -87,7 +91,7 @@ def delete_user(username):
     """Remove the user from the database, cascade to feedback.
     Clear username from session, then redirect"""
     
-    if 'username' not in session or 'username' != session['username']:
+    if 'username' not in session or username != session['username']:
         raise Unauthorized()
 
     user = User.query.get(username)
@@ -102,7 +106,7 @@ def add_feedback(username):
     """Display add feedback form, check that only current user can see this.
     Process feedback form."""
 
-    if 'username' not in session or 'username' != session['username']:
+    if 'username' not in session or username != session['username']:
         raise Unauthorized()
 
     form = FeedbackForm()
@@ -124,7 +128,7 @@ def edit_feedback(feedback_id):
 
     feedback = Feedback.get(feedback_id)
 
-    if 'username' not in session or 'username' != session['username']:
+    if 'username' not in session or feedback.username != session['username']:
         raise Unauthorized()
     
     form = FeedbackForm(obj=feedback)
@@ -147,7 +151,7 @@ def delete_feedback(feedback_id):
 
     feedback = Feedback.get(feedback_id)
 
-    if 'username' not in session or 'username' != session['username']:
+    if 'username' not in session or feedback.username != session['username']:
         raise Unauthorized()
     
     db.session.delete(feedback)

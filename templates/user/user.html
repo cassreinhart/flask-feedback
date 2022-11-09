@@ -12,6 +12,7 @@
     <section>
         <h2>Feedback</h2>
         <ul>
+        {% if user.feedback %}
         {% for feedback in user.feedback %}
             <div>
                 <h3>{{feedback.title}}</h3>
@@ -28,6 +29,7 @@
                 </button>
             </form>
         {% endfor %}
+        {% endif %}
         </ul>
     </section>
 {% endblock %}
